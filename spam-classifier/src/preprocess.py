@@ -26,7 +26,7 @@ def prepare_data(filepath, num_words=5000, max_len=100):
 from sklearn.model_selection import train_test_split
 
 # Poziv funkcije
-X, y, tokenizer = prepare_data("spam-classifier/data/spam", num_words=5000, max_len=100)
+X, y, tokenizer = prepare_data("data/spam", num_words=5000, max_len=100)
 
 # Deljenje na trening i test
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
