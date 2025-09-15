@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.preprocessing.text import Tokenizer
@@ -23,12 +24,21 @@ def prepare_data(filepath, num_words=5000, max_len=100):
 
     return X, y, tokenizer
 
-from sklearn.model_selection import train_test_split
+"""
+if __name__ == "__main__":
+    # Apsolutna putanja do fajla
+    filepath = os.path.join(os.path.dirname(__file__), "..", "data", "spam")
+    print("Koristim fajl:", filepath)
+
+    X, y, tokenizer = prepare_data(filepath, num_words=5000, max_len=100)
+    print(X.shape, y.shape, tokenizer)
+"""
+#from sklearn.model_selection import train_test_split
 
 # Poziv funkcije
-X, y, tokenizer = prepare_data("data/spam", num_words=5000, max_len=100)
+#X, y, tokenizer = prepare_data("data/spam", num_words=5000, max_len=100)
 
 # Deljenje na trening i test
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-print (X,y,tokenizer)
+#print (X,y,tokenizer)
