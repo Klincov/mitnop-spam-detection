@@ -1,44 +1,52 @@
 import os
+import re
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
+from sklearn.feature_extraction.text import TfidfVectorizer
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-def prepare_data(filepath, num_words=5000, max_len=100):
-    # 1. Učitavanje fajla sa tab delimiterom
+def clean_text(text: str) -> str:
+    """Osnovno čišćenje teksta: mala slova, uklanjanje brojeva, URL-ova i višestrukih razmaka."""
+    text = text.lower()
+    text = re.sub(r"http\S+|www\S+", " ", text)  # URL-ovi
+    text = re.sub(r"\d+", " ", text)             # brojevi
+    text = re.sub(r"\s+", " ", text).strip()     # višestruki razmaci
+    return text
+
+def prepare_data(filepath, num_words=5000, max_len=100, mode="sequence", tokenizer=None, vectorizer=None):
+    """
+    mode: "sequence" (za RNN) ili "tfidf" (za FFNN)
+    tokenizer / vectorizer: ako je dat, koristi ga umesto ponovnog fitovanja
+    """
+    # 1. Učitavanje fajla
     data = pd.read_csv(filepath, sep="\t", header=None, encoding="latin-1")
     data.columns = ["label", "text"]
 
-    # 2. Label encoding (ham=0, spam=1)
+    # 2. Čišćenje teksta
+    data["text"] = data["text"].apply(clean_text)
+
+    # 3. Label encoding
     encoder = LabelEncoder()
     data["label"] = encoder.fit_transform(data["label"])
-
-    # 3. Tokenizacija
-    tokenizer = Tokenizer(num_words=num_words)
-    tokenizer.fit_on_texts(data["text"])
-    sequences = tokenizer.texts_to_sequences(data["text"])
-
-    # 4. Padding sekvenci
-    X = pad_sequences(sequences, maxlen=max_len)
     y = data["label"].values
 
-    return X, y, tokenizer
+    # 4. TF-IDF ili sekvence
+    if mode == "tfidf":
+        if vectorizer is None:
+            vectorizer = TfidfVectorizer(max_features=num_words)
+            X = vectorizer.fit_transform(data["text"]).toarray()
+        else:
+            X = vectorizer.transform(data["text"]).toarray()
+        return X, y, vectorizer
 
-"""
-if __name__ == "__main__":
-    # Apsolutna putanja do fajla
-    filepath = os.path.join(os.path.dirname(__file__), "..", "data", "spam")
-    print("Koristim fajl:", filepath)
+    elif mode == "sequence":
+        if tokenizer is None:
+            tokenizer = Tokenizer(num_words=num_words)
+            tokenizer.fit_on_texts(data["text"])
+        sequences = tokenizer.texts_to_sequences(data["text"])
+        X = pad_sequences(sequences, maxlen=max_len)
+        return X, y, tokenizer
 
-    X, y, tokenizer = prepare_data(filepath, num_words=5000, max_len=100)
-    print(X.shape, y.shape, tokenizer)
-"""
-#from sklearn.model_selection import train_test_split
-
-# Poziv funkcije
-#X, y, tokenizer = prepare_data("data/spam", num_words=5000, max_len=100)
-
-# Deljenje na trening i test
-#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-
-#print (X,y,tokenizer)
+    else:
+        raise ValueError("Nepoznat mode. Dozvoljeni su 'sequence' ili 'tfidf'.")

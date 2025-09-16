@@ -1,9 +1,5 @@
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Flatten, Embedding
-from preprocess import prepare_data
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, classification_report
-
+from tensorflow.keras.layers import Dense, Dropout
 
 def build_ffnn(input_dim):
     model = Sequential()
@@ -16,29 +12,3 @@ def build_ffnn(input_dim):
                   loss="binary_crossentropy",
                   metrics=["accuracy"])
     return model
-
-if __name__ == "__main__":
-    # Priprema podataka
-    X, y, tokenizer = prepare_data("data/spam", num_words=5000, max_len=100)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Feed-forward model (koristimo flatten vektore)
-    model = build_ffnn(X_train.shape[1])
-
-    # Treniranje
-    history = model.fit(
-        X_train, y_train,
-        validation_data=(X_test, y_test),
-        epochs=5,
-        batch_size=32,
-        verbose=1
-    )
-
-    # Evaluacija
-    loss, acc = model.evaluate(X_test, y_test, verbose=0)
-    print(f"Test accuracy: {acc:.4f}")
-
-    y_pred = (model.predict(X_test) > 0.5).astype("int32")
-    cm = confusion_matrix(y_test, y_pred)
-    print("Confusion Matrix:\n", cm)
-
