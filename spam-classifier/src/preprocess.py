@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-def clean_text(text: str) -> str:
+def clean_text(text: str):
     """Osnovno čišćenje teksta: mala slova, uklanjanje brojeva, URL-ova i višestrukih razmaka."""
     text = text.lower()
     text = re.sub(r"http\S+|www\S+", " ", text)  # URL-ovi

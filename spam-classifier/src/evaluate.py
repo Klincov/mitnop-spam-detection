@@ -19,7 +19,7 @@ TOKENIZER_PATH = "models/tokenizer.pkl"
 if __name__ == "__main__":
     filepath = os.path.join(os.path.dirname(__file__), "..", "data", "spam")
 
-    # --- 1. Evaluacija FFNN (TF-IDF) ---
+    #Evaluacija FFNN
     if os.path.exists(MODEL_FFNN_PATH) and os.path.exists(VECTORIZER_PATH):
         print("\n=== Evaluacija FFNN (TF-IDF) ===")
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     else:
         print("FFNN ili vectorizer nisu pronađeni. Prvo pokreni fit.py")
 
-    # --- 2. Evaluacija RNN (sekvence) ---
+    #2. Evaluacija RNN 
     if os.path.exists(MODEL_RNN_PATH) and os.path.exists(TOKENIZER_PATH):
         print("\n=== Evaluacija RNN (sekvence) ===")
 

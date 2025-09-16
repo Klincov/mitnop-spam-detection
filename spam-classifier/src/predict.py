@@ -3,6 +3,7 @@ import pickle
 import sys
 import numpy as np
 from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 from preprocess import clean_text
 
 MODEL_FFNN_PATH = "models/spam_ffnn.h5"
@@ -10,7 +11,7 @@ MODEL_RNN_PATH = "models/spam_rnn.h5"
 VECTORIZER_PATH = "models/vectorizer.pkl"
 TOKENIZER_PATH = "models/tokenizer.pkl"
 
-def predict_ffnn(text: str) -> str:
+def predict_ffnn(text: str):
     # učitaj model i vectorizer
     model = load_model(MODEL_FFNN_PATH)
     with open(VECTORIZER_PATH, "rb") as f:
@@ -24,8 +25,7 @@ def predict_ffnn(text: str) -> str:
     pred = model.predict(X)[0][0]
     return "spam" if pred >= 0.5 else "ham"
 
-def predict_rnn(text: str, max_len=100) -> str:
-    from tensorflow.keras.preprocessing.sequence import pad_sequences
+def predict_rnn(text: str, max_len=100):
 
     # učitaj model i tokenizer
     model = load_model(MODEL_RNN_PATH)
