@@ -1,0 +1,5 @@
+Prvo treba pokrenuti src/fit.py gde se modeli treniraju pa cuvaju.
+Zatim se moze pokrenuti src/evaluate.py i src/predict.py
+
+predikcija se pokrece ovako
+python src/predict.py [ffnn|rnn] 'Vasa poruka' skripta ce u konzoli ispisati spam ili ham.
